@@ -117,6 +117,7 @@ func (l logger) error(formatString string, lvl int, values ...any) {
 	}
 }
 
+// WARN is used to log to the default logger at the default level.
 func (l logger) WARN(formatString string, values ...any) {
 	l.warn(formatString, 3, values...)
 }
@@ -127,6 +128,7 @@ func (l logger) warn(formatString string, lvl int, values ...any) {
 	}
 }
 
+//INFO is used to log to the default logger at the default level.
 func (l logger) INFO(formatString string, values ...any) {
 	l.info(formatString, 3, values...)
 }
