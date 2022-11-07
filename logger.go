@@ -15,6 +15,7 @@ const (
 	ERROR_LVL
 )
 
+var Prefix string = ""
 var Logger logger
 
 func TRACE(formatString string, values ...any) {
@@ -22,19 +23,19 @@ func TRACE(formatString string, values ...any) {
 }
 
 func DEBUG(formatString string, values ...any) {
-	Logger.DEBUG(formatString, values...)
+	Logger.debug(formatString, 3, values...)
 }
 
 func ERROR(formatString string, values ...any) {
-	Logger.ERROR(formatString, values...)
+	Logger.error(formatString, 3, values...)
 }
 
 func WARN(formatString string, values ...any) {
-	Logger.WARN(formatString, values...)
+	Logger.warn(formatString, 3, values...)
 }
 
 func INFO(formatString string, values ...any) {
-	Logger.INFO(formatString, values...)
+	Logger.info(formatString, 3, values...)
 }
 
 type logger struct {
@@ -92,7 +93,7 @@ func (l logger) TRACE(formatString string, values ...any) {
 func (l logger) trace(formatString string, lvl int, values ...any) {
 
 	for _, v := range l.traceLogger {
-		v.Printf(f(lvl)+formatString+"\n", values...)
+		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
@@ -103,7 +104,7 @@ func (l logger) DEBUG(formatString string, values ...any) {
 func (l logger) debug(formatString string, lvl int, values ...any) {
 
 	for _, v := range l.debugLogger {
-		v.Printf(f(lvl)+formatString+"\n", values...)
+		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
@@ -113,7 +114,7 @@ func (l logger) ERROR(formatString string, values ...any) {
 
 func (l logger) error(formatString string, lvl int, values ...any) {
 	for _, v := range l.errorLogger {
-		v.Printf(f(lvl)+formatString+"\n", values...)
+		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
@@ -124,7 +125,7 @@ func (l logger) WARN(formatString string, values ...any) {
 
 func (l logger) warn(formatString string, lvl int, values ...any) {
 	for _, v := range l.warnLogger {
-		v.Printf(f(lvl)+formatString+"\n", values...)
+		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
@@ -135,6 +136,6 @@ func (l logger) INFO(formatString string, values ...any) {
 
 func (l logger) info(formatString string, lvl int, values ...any) {
 	for _, v := range l.infoLogger {
-		v.Printf(f(lvl)+formatString+"\n", values...)
+		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
