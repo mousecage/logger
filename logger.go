@@ -6,14 +6,34 @@ import (
 )
 
 const (
-	TRACE = iota
-	DEBUG
-	ERROR
-	WARN
-	INFO
+	TRACE_LVL = iota
+	DEBUG_LVL
+	ERROR_LVL
+	WARN_LVL
+	INFO_LVL
 )
 
 var Logger logger
+
+func TRACE(formatString string, values ...any) {
+	Logger.TRACE(formatString, values...)
+}
+
+func DEBUG(formatString string, values ...any) {
+	Logger.DEBUG(formatString, values...)
+}
+
+func ERROR(formatString string, values ...any) {
+	Logger.ERROR(formatString, values...)
+}
+
+func WARN(formatString string, values ...any) {
+	Logger.WARN(formatString, values...)
+}
+
+func INFO(formatString string, values ...any) {
+	Logger.INFO(formatString, values...)
+}
 
 type logger struct {
 	traceLogger []*log.Logger
