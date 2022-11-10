@@ -70,16 +70,18 @@ func init() {
 func f(lvl int) string {
 	var str string = ""
 	_, file, line, ok := runtime.Caller(lvl)
+	//fmt.Println(runtime.CallersFrames(inp))
 
-	short := file
-	for i := len(file) - 1; i > 0; i-- {
-		if file[i] == '/' {
-			short = file[i+1:]
-			break
+	/*
+		short := file
+		for i := len(file) - 1; i > 0; i-- {
+			if file[i] == '/' {
+				short = file[i+1:]
+				break
+			}
 		}
-	}
-	file = short
-
+		//file = short
+	*/
 	if ok {
 		str = fmt.Sprintf("%s:%d: ", file, line)
 	}
