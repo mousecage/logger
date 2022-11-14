@@ -13,6 +13,7 @@ const (
 	INFO_LVL
 	WARN_LVL
 	ERROR_LVL
+	FATAL_LVL
 )
 
 var Prefix string = ""
@@ -26,16 +27,20 @@ func DEBUG(formatString string, values ...any) {
 	Logger.debug(formatString, 3, values...)
 }
 
-func ERROR(formatString string, values ...any) {
-	Logger.error(formatString, 3, values...)
+func INFO(formatString string, values ...any) {
+	Logger.info(formatString, 3, values...)
 }
 
 func WARN(formatString string, values ...any) {
 	Logger.warn(formatString, 3, values...)
 }
 
-func INFO(formatString string, values ...any) {
-	Logger.info(formatString, 3, values...)
+func ERROR(formatString string, values ...any) {
+	Logger.error(formatString, 3, values...)
+}
+
+func FATAL(formatString string, values ...any) {
+	Logger.fatal(formatString, 3, values...)
 }
 
 type logger struct {
@@ -44,6 +49,7 @@ type logger struct {
 	warnLogger  []*log.Logger
 	infoLogger  []*log.Logger
 	errorLogger []*log.Logger
+	fatalLogger []*log.Logger
 }
 
 func init() {
@@ -59,12 +65,14 @@ func init() {
 	Logger.warnLogger = append(Logger.warnLogger, log.New(file, "WARN: ", log.Ldate|log.Ltime))
 	Logger.infoLogger = append(Logger.infoLogger, log.New(file, "INFO: ", log.Ldate|log.Ltime))
 	Logger.errorLogger = append(Logger.errorLogger, log.New(file, "ERROR: ", log.Ldate|log.Ltime))
+	Logger.errorLogger = append(Logger.fatalLogger, log.New(file, "FATAL: ", log.Ldate|log.Ltime))
 
 	Logger.traceLogger = append(Logger.traceLogger, log.New(os.Stderr, "TRACE: ", log.Ldate|log.Ltime))
 	Logger.debugLogger = append(Logger.debugLogger, log.New(os.Stderr, "DEBUG: ", log.Ldate|log.Ltime))
 	Logger.warnLogger = append(Logger.warnLogger, log.New(os.Stderr, "WARN: ", log.Ldate|log.Ltime))
 	Logger.infoLogger = append(Logger.infoLogger, log.New(os.Stderr, "INFO: ", log.Ldate|log.Ltime))
 	Logger.errorLogger = append(Logger.errorLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
+	Logger.fatalLogger = append(Logger.fatalLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
 }
 
 func f(lvl int) string {
@@ -110,12 +118,13 @@ func (l logger) debug(formatString string, lvl int, values ...any) {
 	}
 }
 
-func (l logger) ERROR(formatString string, values ...any) {
-	l.error(formatString, 3, values...)
+//INFO is used to log to the default logger at the default level.
+func (l logger) INFO(formatString string, values ...any) {
+	l.info(formatString, 3, values...)
 }
 
-func (l logger) error(formatString string, lvl int, values ...any) {
-	for _, v := range l.errorLogger {
+func (l logger) info(formatString string, lvl int, values ...any) {
+	for _, v := range l.infoLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
@@ -131,13 +140,23 @@ func (l logger) warn(formatString string, lvl int, values ...any) {
 	}
 }
 
-//INFO is used to log to the default logger at the default level.
-func (l logger) INFO(formatString string, values ...any) {
-	l.info(formatString, 3, values...)
+func (l logger) ERROR(formatString string, values ...any) {
+	l.error(formatString, 3, values...)
 }
 
-func (l logger) info(formatString string, lvl int, values ...any) {
-	for _, v := range l.infoLogger {
+func (l logger) error(formatString string, lvl int, values ...any) {
+	for _, v := range l.errorLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
+}
+
+func (l logger) FATAL(formatString string, values ...any) {
+	l.fatal(formatString, 3, values...)
+}
+
+func (l logger) fatal(formatString string, lvl int, values ...any) {
+	for _, v := range l.fatalLogger {
+		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
+	}
+	os.Exit(100)
 }
