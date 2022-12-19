@@ -17,33 +17,41 @@ const (
 )
 
 var Prefix string = ""
-var Logger logger
+var DefaultLogger Logger
+
+func NewLogger() Logger {
+	return Logger{}
+}
+
+func ReplaceDefaultLogger(newLogger Logger) {
+	DefaultLogger = newLogger
+}
 
 func TRACE(formatString string, values ...any) {
-	Logger.trace(formatString, 3, values...)
+	DefaultLogger.trace(formatString, 3, values...)
 }
 
 func DEBUG(formatString string, values ...any) {
-	Logger.debug(formatString, 3, values...)
+	DefaultLogger.debug(formatString, 3, values...)
 }
 
 func INFO(formatString string, values ...any) {
-	Logger.info(formatString, 3, values...)
+	DefaultLogger.info(formatString, 3, values...)
 }
 
 func WARN(formatString string, values ...any) {
-	Logger.warn(formatString, 3, values...)
+	DefaultLogger.warn(formatString, 3, values...)
 }
 
 func ERROR(formatString string, values ...any) {
-	Logger.error(formatString, 3, values...)
+	DefaultLogger.error(formatString, 3, values...)
 }
 
 func FATAL(formatString string, values ...any) {
-	Logger.fatal(formatString, 3, values...)
+	DefaultLogger.fatal(formatString, 3, values...)
 }
 
-type logger struct {
+type Logger struct {
 	traceLogger []*log.Logger
 	debugLogger []*log.Logger
 	warnLogger  []*log.Logger
@@ -53,26 +61,26 @@ type logger struct {
 }
 
 func init() {
-	Logger = logger{}
+	DefaultLogger = Logger{}
 
 	file, err := os.OpenFile("logs.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	Logger.traceLogger = append(Logger.traceLogger, log.New(file, "TRACE: ", log.Ldate|log.Ltime))
-	Logger.debugLogger = append(Logger.debugLogger, log.New(file, "DEBUG: ", log.Ldate|log.Ltime))
-	Logger.warnLogger = append(Logger.warnLogger, log.New(file, "WARN: ", log.Ldate|log.Ltime))
-	Logger.infoLogger = append(Logger.infoLogger, log.New(file, "INFO: ", log.Ldate|log.Ltime))
-	Logger.errorLogger = append(Logger.errorLogger, log.New(file, "ERROR: ", log.Ldate|log.Ltime))
-	Logger.errorLogger = append(Logger.fatalLogger, log.New(file, "FATAL: ", log.Ldate|log.Ltime))
+	DefaultLogger.traceLogger = append(DefaultLogger.traceLogger, log.New(file, "TRACE: ", log.Ldate|log.Ltime))
+	DefaultLogger.debugLogger = append(DefaultLogger.debugLogger, log.New(file, "DEBUG: ", log.Ldate|log.Ltime))
+	DefaultLogger.warnLogger = append(DefaultLogger.warnLogger, log.New(file, "WARN: ", log.Ldate|log.Ltime))
+	DefaultLogger.infoLogger = append(DefaultLogger.infoLogger, log.New(file, "INFO: ", log.Ldate|log.Ltime))
+	DefaultLogger.errorLogger = append(DefaultLogger.errorLogger, log.New(file, "ERROR: ", log.Ldate|log.Ltime))
+	DefaultLogger.errorLogger = append(DefaultLogger.fatalLogger, log.New(file, "FATAL: ", log.Ldate|log.Ltime))
 
-	Logger.traceLogger = append(Logger.traceLogger, log.New(os.Stderr, "TRACE: ", log.Ldate|log.Ltime))
-	Logger.debugLogger = append(Logger.debugLogger, log.New(os.Stderr, "DEBUG: ", log.Ldate|log.Ltime))
-	Logger.warnLogger = append(Logger.warnLogger, log.New(os.Stderr, "WARN: ", log.Ldate|log.Ltime))
-	Logger.infoLogger = append(Logger.infoLogger, log.New(os.Stderr, "INFO: ", log.Ldate|log.Ltime))
-	Logger.errorLogger = append(Logger.errorLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
-	Logger.fatalLogger = append(Logger.fatalLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
+	DefaultLogger.traceLogger = append(DefaultLogger.traceLogger, log.New(os.Stderr, "TRACE: ", log.Ldate|log.Ltime))
+	DefaultLogger.debugLogger = append(DefaultLogger.debugLogger, log.New(os.Stderr, "DEBUG: ", log.Ldate|log.Ltime))
+	DefaultLogger.warnLogger = append(DefaultLogger.warnLogger, log.New(os.Stderr, "WARN: ", log.Ldate|log.Ltime))
+	DefaultLogger.infoLogger = append(DefaultLogger.infoLogger, log.New(os.Stderr, "INFO: ", log.Ldate|log.Ltime))
+	DefaultLogger.errorLogger = append(DefaultLogger.errorLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
+	DefaultLogger.fatalLogger = append(DefaultLogger.fatalLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
 }
 
 func f(lvl int) string {
@@ -96,22 +104,22 @@ func f(lvl int) string {
 	return str
 }
 
-func (l logger) TRACE(formatString string, values ...any) {
+func (l Logger) TRACE(formatString string, values ...any) {
 	l.trace(formatString, 3, values...)
 }
 
-func (l logger) trace(formatString string, lvl int, values ...any) {
+func (l Logger) trace(formatString string, lvl int, values ...any) {
 
 	for _, v := range l.traceLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
-func (l logger) DEBUG(formatString string, values ...any) {
+func (l Logger) DEBUG(formatString string, values ...any) {
 	l.debug(formatString, 3, values...)
 }
 
-func (l logger) debug(formatString string, lvl int, values ...any) {
+func (l Logger) debug(formatString string, lvl int, values ...any) {
 
 	for _, v := range l.debugLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
@@ -119,42 +127,42 @@ func (l logger) debug(formatString string, lvl int, values ...any) {
 }
 
 //INFO is used to log to the default logger at the default level.
-func (l logger) INFO(formatString string, values ...any) {
+func (l Logger) INFO(formatString string, values ...any) {
 	l.info(formatString, 3, values...)
 }
 
-func (l logger) info(formatString string, lvl int, values ...any) {
+func (l Logger) info(formatString string, lvl int, values ...any) {
 	for _, v := range l.infoLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
 // WARN is used to log to the default logger at the default level.
-func (l logger) WARN(formatString string, values ...any) {
+func (l Logger) WARN(formatString string, values ...any) {
 	l.warn(formatString, 3, values...)
 }
 
-func (l logger) warn(formatString string, lvl int, values ...any) {
+func (l Logger) warn(formatString string, lvl int, values ...any) {
 	for _, v := range l.warnLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
-func (l logger) ERROR(formatString string, values ...any) {
+func (l Logger) ERROR(formatString string, values ...any) {
 	l.error(formatString, 3, values...)
 }
 
-func (l logger) error(formatString string, lvl int, values ...any) {
+func (l Logger) error(formatString string, lvl int, values ...any) {
 	for _, v := range l.errorLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
 }
 
-func (l logger) FATAL(formatString string, values ...any) {
+func (l Logger) FATAL(formatString string, values ...any) {
 	l.fatal(formatString, 3, values...)
 }
 
-func (l logger) fatal(formatString string, lvl int, values ...any) {
+func (l Logger) fatal(formatString string, lvl int, values ...any) {
 	for _, v := range l.fatalLogger {
 		v.Printf(Prefix+" "+f(lvl)+formatString+"\n", values...)
 	}
