@@ -68,19 +68,20 @@ func init() {
 		log.Fatal(err)
 	}
 
+	//FIXME: Spacing is currently handled using literals
 	DefaultLogger.traceLogger = append(DefaultLogger.traceLogger, log.New(file, "TRACE: ", log.Ldate|log.Ltime))
 	DefaultLogger.debugLogger = append(DefaultLogger.debugLogger, log.New(file, "DEBUG: ", log.Ldate|log.Ltime))
-	DefaultLogger.warnLogger = append(DefaultLogger.warnLogger, log.New(file, "WARN: ", log.Ldate|log.Ltime))
-	DefaultLogger.infoLogger = append(DefaultLogger.infoLogger, log.New(file, "INFO: ", log.Ldate|log.Ltime))
+	DefaultLogger.warnLogger = append(DefaultLogger.warnLogger, log.New(file, "WARN:  ", log.Ldate|log.Ltime))
+	DefaultLogger.infoLogger = append(DefaultLogger.infoLogger, log.New(file, "INFO:  ", log.Ldate|log.Ltime))
 	DefaultLogger.errorLogger = append(DefaultLogger.errorLogger, log.New(file, "ERROR: ", log.Ldate|log.Ltime))
 	DefaultLogger.errorLogger = append(DefaultLogger.fatalLogger, log.New(file, "FATAL: ", log.Ldate|log.Ltime))
 
 	DefaultLogger.traceLogger = append(DefaultLogger.traceLogger, log.New(os.Stderr, "TRACE: ", log.Ldate|log.Ltime))
 	DefaultLogger.debugLogger = append(DefaultLogger.debugLogger, log.New(os.Stderr, "DEBUG: ", log.Ldate|log.Ltime))
-	DefaultLogger.warnLogger = append(DefaultLogger.warnLogger, log.New(os.Stderr, "WARN: ", log.Ldate|log.Ltime))
-	DefaultLogger.infoLogger = append(DefaultLogger.infoLogger, log.New(os.Stderr, "INFO: ", log.Ldate|log.Ltime))
+	DefaultLogger.warnLogger = append(DefaultLogger.warnLogger, log.New(os.Stderr, "WARN:  ", log.Ldate|log.Ltime))
+	DefaultLogger.infoLogger = append(DefaultLogger.infoLogger, log.New(os.Stderr, "INFO:  ", log.Ldate|log.Ltime))
 	DefaultLogger.errorLogger = append(DefaultLogger.errorLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
-	DefaultLogger.fatalLogger = append(DefaultLogger.fatalLogger, log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime))
+	DefaultLogger.fatalLogger = append(DefaultLogger.fatalLogger, log.New(os.Stderr, "FATAL: ", log.Ldate|log.Ltime))
 }
 
 func f(lvl int) string {
